@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CONECTA</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <h1>CONECTA</h1>
+
+    <div class="main-buttons">
+        <button class="yes">SI</button>
+        <button class="no">NO</button>
+    </div>
+
+    <div class="nav-buttons">
+        <a th:href="@{/usuarios}"><button>Usuarios</button></a>
+        <a th:href="@{/frases}"><button>Frases</button></a>
+    </div>
+
+    <!-- JS del eye-tracker -->
+    <script th:src="@{/js/script.js}"></script>
+</body>
+</html>
