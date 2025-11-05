@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>CONECTA - Comunicación</title>
+    <title>CONECTA - Mi Voz</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -125,12 +125,49 @@
             transition: all 0.2s ease;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
         }
 
         #frases li:hover {
             transform: translateX(5px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
             background: linear-gradient(135deg, white 0%, #f9f9f9 100%);
+        }
+
+        .frase-text {
+            flex: 1;
+        }
+
+        /* Botón eliminar frase */
+        .delete-btn {
+            background: var(--coral);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+            flex-shrink: 0;
+        }
+
+        .delete-btn:hover {
+            background: #ff6b52;
+            transform: scale(1.15);
+            box-shadow: 0 4px 10px rgba(255, 127, 103, 0.4);
+        }
+
+        .delete-btn:active {
+            transform: scale(0.95);
         }
 
         audio {
@@ -140,44 +177,53 @@
             border-radius: 10px;
         }
 
-        /* Botones Sí/No fijos a la derecha */
+        /* Botones Sí/No fijos a la derecha - OPTIMIZADOS PARA EYE TRACKING */
         .fixed-buttons {
             position: fixed;
             top: 50%;
-            right: 10px;
+            right: 20px;
             transform: translateY(-50%);
             display: flex;
             flex-direction: column;
             z-index: 1000;
-            gap: 15px;
+            gap: 40px; /* Mayor separación para eye tracking */
         }
 
-        .fixed-buttons button {
-            width: 80px;
-            height: 80px;
+        .response-btn-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .fixed-buttons button.main-response {
+            width: 120px;  /* Más grande para eye tracking */
+            height: 120px;
             margin: 0;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
             border: none;
             border-radius: 50%;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.2s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: 600;
-            padding: 10px;
+            font-weight: 700;
+            padding: 15px;
+            position: relative;
         }
 
-        .fixed-buttons button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        .fixed-buttons button.main-response:hover {
+            transform: scale(1.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
         }
 
-        .fixed-buttons button:active {
-            transform: scale(0.95);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        .fixed-buttons button.main-response:active {
+            transform: scale(1.0);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
         }
 
         #btnSi {
@@ -186,6 +232,31 @@
 
         #btnNo {
             background: linear-gradient(135deg, var(--coral) 0%, #ff6b52 100%);
+        }
+
+        /* Botón editar/regrabar */
+        .edit-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: white;
+            color: var(--gris-oscuro);
+            border: 2px solid var(--gris-oscuro);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            padding: 0;
+            margin: 0;
+        }
+
+        .edit-btn:hover {
+            background: var(--gris-oscuro);
+            color: white;
+            transform: scale(1.1);
         }
 
         /* Estado de grabación */
@@ -209,10 +280,20 @@
                 max-width: 150px;
             }
 
-            .fixed-buttons button {
-                width: 70px;
-                height: 70px;
-                font-size: 0.85rem;
+            .fixed-buttons {
+                gap: 30px;
+            }
+
+            .fixed-buttons button.main-response {
+                width: 100px;
+                height: 100px;
+                font-size: 1rem;
+            }
+
+            .edit-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
             }
 
             #instruccion {
@@ -222,13 +303,20 @@
 
         @media (max-width: 480px) {
             .fixed-buttons {
-                right: 5px;
+                right: 10px;
+                gap: 25px;
             }
 
-            .fixed-buttons button {
-                width: 60px;
-                height: 60px;
-                font-size: 0.75rem;
+            .fixed-buttons button.main-response {
+                width: 90px;
+                height: 90px;
+                font-size: 0.95rem;
+            }
+
+            .edit-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
             }
 
             h1 {
@@ -238,6 +326,12 @@
             button {
                 padding: 12px 20px;
                 font-size: 16px;
+            }
+
+            .delete-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 1rem;
             }
         }
     </style>
@@ -252,7 +346,7 @@
         <a href="index.html" class="btn-home">🏠 Inicio</a>
     </div>
 
-    <h1>Comunicación</h1>
+    <h1>💬 Mi Voz</h1>
 
     <p id="instruccion">🎙️ Presiona el botón y graba con tu propia voz</p>
 
@@ -263,16 +357,22 @@
     <ul id="frases"></ul>
     <audio id="audioPlayer" controls></audio>
 
-    <!-- Botones Sí/No flotantes -->
+    <!-- Botones Sí/No flotantes con edición -->
     <div class="fixed-buttons">
-        <button id="btnSi">
-            🎤
-            <span>Sí</span>
-        </button>
-        <button id="btnNo">
-            🎤
-            <span>No</span>
-        </button>
+        <div class="response-btn-container">
+            <button id="btnSi" class="main-response">
+                🎤
+                <span>Sí</span>
+            </button>
+            <button id="editSi" class="edit-btn" title="Regrabar Sí">✏️</button>
+        </div>
+        <div class="response-btn-container">
+            <button id="btnNo" class="main-response">
+                🎤
+                <span>No</span>
+            </button>
+            <button id="editNo" class="edit-btn" title="Regrabar No">✏️</button>
+        </div>
     </div>
 
     <script>
@@ -343,25 +443,61 @@
 
                 if (audios.length === 0) {
                     const li = document.createElement('li');
-                    li.textContent = "⚠️ No hay frases grabadas aún";
+                    const span = document.createElement('span');
+                    span.className = 'frase-text';
+                    span.textContent = "⚠️ No hay frases grabadas aún";
                     li.style.cursor = 'default';
                     li.style.background = 'rgba(255, 255, 255, 0.5)';
+                    li.appendChild(span);
                     frasesList.appendChild(li);
                     return;
                 }
 
                 audios.forEach(item => {
                     const li = document.createElement('li');
-                    li.textContent = `🎤 Frase (${item.fecha})`;
-                    li.onclick = () => {
+
+                    // Texto de la frase
+                    const textSpan = document.createElement('span');
+                    textSpan.className = 'frase-text';
+                    textSpan.textContent = `🎤 Frase (${item.fecha})`;
+                    textSpan.onclick = () => {
                         const url = URL.createObjectURL(item.audio);
                         const audio = document.getElementById('audioPlayer');
                         audio.src = url;
                         audio.play();
                         audio.onended = () => URL.revokeObjectURL(url);
                     };
+
+                    // Botón eliminar
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.innerHTML = '×';
+                    deleteBtn.title = 'Eliminar frase';
+                    deleteBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        deleteFrase(item.id);
+                    };
+
+                    li.appendChild(textSpan);
+                    li.appendChild(deleteBtn);
                     frasesList.appendChild(li);
                 });
+            };
+        }
+
+        // Eliminar frase
+        async function deleteFrase(id) {
+            if (!confirm('¿Estás seguro de que quieres eliminar esta frase?')) {
+                return;
+            }
+
+            if (!db) await openDB();
+            const tx = db.transaction(STORE_FRASES, 'readwrite');
+            const store = tx.objectStore(STORE_FRASES);
+            store.delete(id);
+
+            tx.oncomplete = () => {
+                loadAudios();
             };
         }
 
@@ -462,6 +598,35 @@
             }
         }
 
+        // Regrabar respuesta (forzar nueva grabación)
+        async function regrabarRespuesta(tipo, btn) {
+            if (!confirm(`¿Quieres regrabar "${tipo}"?`)) {
+                return;
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                let chunks = [];
+                recorder.ondataavailable = e => chunks.push(e.data);
+                recorder.onstop = async () => {
+                    const blob = new Blob(chunks, { type: 'audio/webm' });
+                    await saveRespuesta(tipo, blob);
+                    btn.classList.remove('recording');
+                    alert(`✅ "${tipo}" regrabado exitosamente`);
+                    mostrarInstruccion();
+                };
+                recorder.start();
+                btn.classList.add('recording');
+                setTimeout(() => {
+                    recorder.stop();
+                    stream.getTracks().forEach(track => track.stop());
+                }, 3000);
+            } catch {
+                alert("❌ No se pudo acceder al micrófono.");
+            }
+        }
+
         // Event listeners para botones Sí/No
         document.getElementById('btnSi').onclick = function() {
             handleRespuesta('Si', this);
@@ -469,6 +634,17 @@
 
         document.getElementById('btnNo').onclick = function() {
             handleRespuesta('No', this);
+        };
+
+        // Event listeners para botones de editar
+        document.getElementById('editSi').onclick = function(e) {
+            e.stopPropagation();
+            regrabarRespuesta('Si', this);
+        };
+
+        document.getElementById('editNo').onclick = function(e) {
+            e.stopPropagation();
+            regrabarRespuesta('No', this);
         };
 
         // Inicialización
