@@ -4,10 +4,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class HomeController {
+public class InicioController {
 
     @GetMapping("/")
-    public String home() {
-        return "index"; // Thymeleaf cargará src/main/resources/templates/index.html
+    public String inicio() {
+        return "inicio"; // apunta a inicio.html
     }
 }
+

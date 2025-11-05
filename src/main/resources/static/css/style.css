@@ -17,12 +17,18 @@ h1 {
     text-align: center;
 }
 
+div{
+width: 100%;
+max-width: 400px;
+height: auto;
+}
+
 .main-buttons {
     display: flex;
     flex-direction: column; /* Stack vertically on mobile */
     gap: 1rem;
-    width: 100%;
-    max-width: 400px;
+    width: 20%;
+   
     margin-bottom: 2rem;
 }
 
