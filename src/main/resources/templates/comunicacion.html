@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>CONECTA - Comunicación</title>
+    <meta charset="UTF-8">
+    <style>
+        :root {
+            --gris-oscuro: #2d3748;
+            --celeste: #76abae;
+            --coral: #ff7f67;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: var(--gris-oscuro);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+
+        #startRec {
+            background-color: var(--gris-oscuro);
+            color: white;
+        }
+
+        #startRec:hover {
+            background-color: #1f2933;
+        }
+
+        #frases {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 500px;
+            list-style-type: none;
+            padding: 0 10px;
+        }
+
+        #frases li {
+            margin: 5px 0;
+            padding: 10px;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        #frases li:hover {
+            background-color: #d0d0d0;
+        }
+
+        #instruccion {
+            font-size: 0.9em;
+            color: var(--gris-oscuro);
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        audio {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* --- Botones Sí/No fijos a la derecha --- */
+        .fixed-buttons {
+            position: fixed;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .fixed-buttons button {
+            width: 70px;
+            height: 70px;
+            margin: 10px 0;
+            font-size: 18px;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.1s, box-shadow 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .fixed-buttons button:active {
+            transform: scale(0.85);
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        #btnSi {
+            background-color: var(--celeste);
+        }
+
+        #btnNo {
+            background-color: var(--coral);
+        }
+
+        /* Ajuste para mobile */
+        @media (max-width: 600px) {
+            .fixed-buttons button {
+                width: 60px;
+                height: 60px;
+                font-size: 16px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+    <h1>Comunicación</h1>
+
+    <p id="instruccion">🎙️ Presiona el botón y graba con tu propia voz la palabra Sí/No</p>
+
+    <div>
+        <button id="startRec">Grabar frase</button>
+    </div>
+
+    <ul id="frases"></ul>
+    <audio id="audioPlayer" controls></audio>
+
+    <!-- Botones Sí/No flotantes -->
+    <div class="fixed-buttons">
+        <button id="btnSi">🎤 Sí</button>
+        <button id="btnNo">🎤 No</button>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        let db;
+
+        const DB_NAME = 'ConectaDB';
+        let DB_VERSION = 3;
+        const STORE_FRASES = 'frases';
+        const STORE_RESP = 'respuestas';
+
+        async function openDB() {
+            return new Promise((resolve, reject) => {
+                let request = indexedDB.open(DB_NAME, DB_VERSION);
+
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+                    if (!db.objectStoreNames.contains(STORE_FRASES)) {
+                        db.createObjectStore(STORE_FRASES, { keyPath: 'id', autoIncrement: true });
+                    }
+                    if (!db.objectStoreNames.contains(STORE_RESP)) {
+                        db.createObjectStore(STORE_RESP, { keyPath: 'tipo' });
+                    }
+                };
+
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    resolve();
+                };
+
+                request.onerror = async (event) => {
+                    if (event.target.error.name === "VersionError") {
+                        const req = indexedDB.open(DB_NAME);
+                        req.onsuccess = () => {
+                            const currentVersion = req.result.version;
+                            DB_VERSION = currentVersion + 1;
+                            openDB().then(resolve).catch(reject);
+                        };
+                        req.onerror = (e) => reject(e.target.error);
+                    } else {
+                        reject(event.target.error);
+                    }
+                };
+            });
+        }
+
+        // --- Frases libres ---
+        async function saveAudio(blob) {
+            if (!db) await openDB();
+            const tx = db.transaction(STORE_FRASES, 'readwrite');
+            const store = tx.objectStore(STORE_FRASES);
+            store.add({ fecha: new Date().toLocaleString(), audio: blob });
+        }
+
+        async function loadAudios() {
+            if (!db) await openDB();
+            const tx = db.transaction(STORE_FRASES, 'readonly');
+            const store = tx.objectStore(STORE_FRASES);
+            const request = store.getAll();
+
+            request.onsuccess = (event) => {
+                const audios = event.target.result;
+                const frasesList = document.getElementById('frases');
+                frasesList.innerHTML = '';
+
+                if (audios.length === 0) {
+                    const li = document.createElement('li');
+                    li.textContent = "⚠️ No hay frases grabadas aún";
+                    frasesList.appendChild(li);
+                    return;
+                }
+
+                audios.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = "🎤 Frase (" + item.fecha + ")";
+                    li.onclick = () => {
+                        const url = URL.createObjectURL(item.audio);
+                        const audio = document.getElementById('audioPlayer');
+                        audio.src = url;
+                        audio.play();
+                        audio.onended = () => URL.revokeObjectURL(url);
+                    };
+                    frasesList.appendChild(li);
+                });
+            };
+        }
+
+        document.getElementById("startRec").onclick = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.onstop = async () => {
+                    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                    await saveAudio(blob);
+                    await loadAudios();
+                    audioChunks = [];
+                };
+
+                mediaRecorder.start();
+                alert("🎙️ Grabando... (3 segundos)");
+                setTimeout(() => mediaRecorder.stop(), 3000);
+            } catch (err) {
+                alert("❌ No se pudo acceder al micrófono. Revisa los permisos.");
+            }
+        };
+
+        // --- Botones Sí/No ---
+        async function saveRespuesta(tipo, blob) {
+            if (!db) await openDB();
+            const tx = db.transaction(STORE_RESP, 'readwrite');
+            tx.objectStore(STORE_RESP).put({ tipo, audio: blob });
+        }
+
+        async function getRespuesta(tipo) {
+            if (!db) await openDB();
+            return new Promise(resolve => {
+                const tx = db.transaction(STORE_RESP, 'readonly');
+                const req = tx.objectStore(STORE_RESP).get(tipo);
+                req.onsuccess = e => resolve(e.target.result ? e.target.result.audio : null);
+            });
+        }
+
+        async function handleRespuesta(tipo) {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const existingAudio = await getRespuesta(tipo);
+
+            if (existingAudio) {
+                const url = URL.createObjectURL(existingAudio);
+                audioPlayer.src = url;
+                audioPlayer.play();
+                audioPlayer.onended = () => URL.revokeObjectURL(url);
+                document.getElementById('instruccion').textContent = '';
+            } else {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                    let chunks = [];
+                    recorder.ondataavailable = e => chunks.push(e.data);
+                    recorder.onstop = async () => {
+                        const blob = new Blob(chunks, { type: 'audio/webm' });
+                        await saveRespuesta(tipo, blob);
+                        alert(`🎤 Grabación de "${tipo}" guardada`);
+                        mostrarInstruccion();
+                    };
+                    recorder.start();
+                    alert(`🎙️ Grabando "${tipo}"... (3 segundos)`);
+                    setTimeout(() => recorder.stop(), 3000);
+                } catch {
+                    alert("❌ No se pudo acceder al micrófono.");
+                }
+            }
+        }
+
+        async function mostrarInstruccion() {
+            const audioSi = await getRespuesta('Si');
+            const audioNo = await getRespuesta('No');
+            const instruccion = document.getElementById('instruccion');
+            if (!audioSi || !audioNo) {
+                instruccion.textContent = '🎙️ Presiona el botón y graba con tu propia voz la palabra Sí/No';
+            } else {
+                instruccion.textContent = '';
+            }
+        }
+
+        document.getElementById('btnSi').onclick = () => handleRespuesta('Si');
+        document.getElementById('btnNo').onclick = () => handleRespuesta('No');
+
+        window.onload = async () => {
+            await openDB();
+            await loadAudios();
+            mostrarInstruccion();
+        };
+    </script>
+</body>
+</html>
