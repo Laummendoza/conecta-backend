@@ -204,6 +204,11 @@
             border-radius: 10px;
         }
 
+        /* Ocultar reproductor por defecto */
+        audio.hidden {
+            display: none;
+        }
+
         /* Espaciado para evitar superposición con botones fijos en desktop */
         @media (min-width: 769px) {
             body {
@@ -416,7 +421,7 @@
     </div>
 
     <ul id="frases"></ul>
-    <audio id="audioPlayer" controls></audio>
+    <audio id="audioPlayer" class="hidden" controls></audio>
 
     <!-- Botones Sí/No flotantes con edición -->
     <div class="fixed-buttons">
@@ -500,9 +505,13 @@
             request.onsuccess = (event) => {
                 const audios = event.target.result;
                 const frasesList = document.getElementById('frases');
+                const audioPlayer = document.getElementById('audioPlayer');
                 frasesList.innerHTML = '';
 
                 if (audios.length === 0) {
+                    // Ocultar reproductor cuando no hay frases
+                    audioPlayer.classList.add('hidden');
+
                     const li = document.createElement('li');
                     const span = document.createElement('span');
                     span.className = 'frase-text';
@@ -513,6 +522,9 @@
                     frasesList.appendChild(li);
                     return;
                 }
+
+                // Mostrar reproductor cuando hay frases
+                audioPlayer.classList.remove('hidden');
 
                 audios.forEach(item => {
                     const li = document.createElement('li');
