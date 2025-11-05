@@ -18,9 +18,14 @@
             box-sizing: border-box;
         }
 
+        html {
+            background: var(--beige); /* Fondo base por si se ve algo debajo */
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, var(--beige) 0%, #ede0d4 100%);
+            background-attachment: fixed; /* Fija el gradiente al viewport */
             color: var(--gris-oscuro);
             display: flex;
             flex-direction: column;
