@@ -20,18 +20,25 @@ El objetivo principal es ofrecer una herramienta tecnológica accesible, que per
 ---
 
 ## 📂 Estructura del proyecto
-conecta/
-├── src/
-│ ├── main/
-│ │ ├── java/com/conecta/conecta/ → Código fuente Java
-│ │ └── resources/ → Templates Thymeleaf, configuración
-│ └── test/ → Tests
-├── pom.xml → Dependencias Maven
-└── README.md → Documentación del proyecto
 
-yaml
-Copiar
-Editar
+```
+conecta-backend/
+├── src/
+│   ├── main/
+│   │   ├── java/com/conecta/conecta/     → Código fuente Java
+│   │   └── resources/                    → Templates Thymeleaf, configuración
+│   │       ├── templates/                → Páginas HTML (Thymeleaf)
+│   │       │   ├── index.html           → Página de inicio
+│   │       │   └── comunicacion.html    → Página "Mi Voz"
+│   │       └── static/                   → Recursos estáticos (CSS, JS, imágenes)
+│   └── test/                             → Tests
+├── docs/                                 → GitHub Pages (documentación pública)
+│   ├── index.html                       → Landing page
+│   ├── comunicacion.html                → Demo "Mi Voz"
+│   └── logo.jpg                         → Logo CONECTA
+├── pom.xml                               → Dependencias Maven
+└── README.md                             → Documentación del proyecto
+```
 
 ---
 
