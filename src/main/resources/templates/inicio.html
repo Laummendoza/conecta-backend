@@ -41,13 +41,16 @@
 
         /* Logo */
         .logo {
-            font-size: 3rem;
-            font-weight: 700;
-            color: #76abae;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
             animation: slideDown 0.6s ease-out;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .logo img {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08));
         }
 
         @keyframes slideDown {
@@ -136,8 +139,7 @@
         /* Responsive para tablets y móviles */
         @media (max-width: 768px) {
             .logo {
-                font-size: 2.5rem;
-                letter-spacing: 3px;
+                max-width: 320px;
             }
 
             .welcome-message {
@@ -162,8 +164,7 @@
 
         @media (max-width: 480px) {
             .logo {
-                font-size: 2rem;
-                letter-spacing: 2px;
+                max-width: 280px;
             }
 
             .welcome-message {
@@ -180,7 +181,9 @@
 <body>
     <div class="container">
         <!-- Logo -->
-        <div class="logo">CONECTA</div>
+        <div class="logo">
+            <img src="/logo.jpg" alt="CONECTA - Comunicación para ELA">
+        </div>
 
         <!-- Frase de bienvenida -->
         <p class="welcome-message">
