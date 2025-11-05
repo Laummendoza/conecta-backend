@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>CONECTA - Mi Voz</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --gris-oscuro: #2d3748;
+            --celeste: #76abae;
+            --coral: #ff7f67;
+            --beige: #f5e6d3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--beige) 0%, #ede0d4 100%);
+            color: var(--gris-oscuro);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Header con logo */
+        .header {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-small {
+            max-width: 180px;
+            cursor: pointer;
+        }
+
+        .logo-small img {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.08));
+        }
+
+        .btn-home {
+            background: var(--celeste);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(118, 171, 174, 0.3);
+        }
+
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(118, 171, 174, 0.4);
+        }
+
+        h1 {
+            margin: 20px 0;
+            color: var(--gris-oscuro);
+            text-align: center;
+        }
+
+        #instruccion {
+            font-size: 1.1em;
+            color: var(--gris-oscuro);
+            margin: 10px 0 20px 0;
+            text-align: center;
+            max-width: 500px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        #startRec {
+            background: linear-gradient(135deg, var(--gris-oscuro) 0%, #1f2933 100%);
+            color: white;
+            box-shadow: 0 6px 15px rgba(45, 55, 72, 0.3);
+        }
+
+        #startRec:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(45, 55, 72, 0.4);
+        }
+
+        #startRec:active {
+            transform: translateY(0);
+        }
+
+        #frases {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 500px;
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #frases li {
+            margin: 8px 0;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #frases li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            background: linear-gradient(135deg, white 0%, #f9f9f9 100%);
+        }
+
+        .frase-text {
+            flex: 1;
+        }
+
+        /* Botón eliminar frase */
+        .delete-btn {
+            background: var(--coral);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+            flex-shrink: 0;
+        }
+
+        .delete-btn:hover {
+            background: #ff6b52;
+            transform: scale(1.15);
+            box-shadow: 0 4px 10px rgba(255, 127, 103, 0.4);
+        }
+
+        .delete-btn:active {
+            transform: scale(0.95);
+        }
+
+        audio {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 10px;
+        }
+
+        /* Botones Sí/No fijos a la derecha - OPTIMIZADOS PARA EYE TRACKING */
+        .fixed-buttons {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            gap: 40px; /* Mayor separación para eye tracking */
+        }
+
+        .response-btn-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .fixed-buttons button.main-response {
+            width: 120px;  /* Más grande para eye tracking */
+            height: 120px;
+            margin: 0;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            padding: 15px;
+            position: relative;
+        }
+
+        .fixed-buttons button.main-response:hover {
+            transform: scale(1.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .fixed-buttons button.main-response:active {
+            transform: scale(1.0);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+        }
+
+        #btnSi {
+            background: linear-gradient(135deg, var(--celeste) 0%, #5a9295 100%);
+        }
+
+        #btnNo {
+            background: linear-gradient(135deg, var(--coral) 0%, #ff6b52 100%);
+        }
+
+        /* Botón editar/regrabar */
+        .edit-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: white;
+            color: var(--gris-oscuro);
+            border: 2px solid var(--gris-oscuro);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            padding: 0;
+            margin: 0;
+        }
+
+        .edit-btn:hover {
+            background: var(--gris-oscuro);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Estado de grabación */
+        .recording {
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .logo-small {
+                max-width: 150px;
+            }
+
+            .fixed-buttons {
+                gap: 30px;
+            }
+
+            .fixed-buttons button.main-response {
+                width: 100px;
+                height: 100px;
+                font-size: 1rem;
+            }
+
+            .edit-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            #instruccion {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .fixed-buttons {
+                right: 10px;
+                gap: 25px;
+            }
+
+            .fixed-buttons button.main-response {
+                width: 90px;
+                height: 90px;
+                font-size: 0.95rem;
+            }
+
+            .edit-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            button {
+                padding: 12px 20px;
+                font-size: 16px;
+            }
+
+            .delete-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-small" onclick="window.location.href='index.html'">
+            <img src="logo.jpg" alt="CONECTA">
+        </div>
+        <a href="index.html" class="btn-home">🏠 Inicio</a>
+    </div>
+
+    <h1>💬 Mi Voz</h1>
+
+    <p id="instruccion">🎙️ Presiona el botón y graba con tu propia voz</p>
+
+    <div>
+        <button id="startRec">🎤 Grabar frase</button>
+    </div>
+
+    <ul id="frases"></ul>
+    <audio id="audioPlayer" controls></audio>
+
+    <!-- Botones Sí/No flotantes con edición -->
+    <div class="fixed-buttons">
+        <div class="response-btn-container">
+            <button id="btnSi" class="main-response">
+                🎤
+                <span>Sí</span>
+            </button>
+            <button id="editSi" class="edit-btn" title="Regrabar Sí">✏️</button>
+        </div>
+        <div class="response-btn-container">
+            <button id="btnNo" class="main-response">
+                🎤
+                <span>No</span>
+            </button>
+            <button id="editNo" class="edit-btn" title="Regrabar No">✏️</button>
+        </div>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        let db;
+
+        const DB_NAME = 'ConectaDB';
+        let DB_VERSION = 3;
+        const STORE_FRASES = 'frases';
+        const STORE_RESP = 'respuestas';
+
+        // Abrir/crear base de datos IndexedDB
+        async function openDB() {
+            return new Promise((resolve, reject) => {
+                let request = indexedDB.open(DB_NAME, DB_VERSION);
+
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+                    if (!db.objectStoreNames.contains(STORE_FRASES)) {
+                        db.createObjectStore(STORE_FRASES, { keyPath: 'id', autoIncrement: true });
+                    }
+                    if (!db.objectStoreNames.contains(STORE_RESP)) {
+                        db.createObjectStore(STORE_RESP, { keyPath: 'tipo' });
+                    }
+                };
+
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    resolve();
+                };
+
+                request.onerror = async (event) => {
+                    if (event.target.error.name === "VersionError") {
+                        const req = indexedDB.open(DB_NAME);
+                        req.onsuccess = () => {
+                            const currentVersion = req.result.version;
+                            DB_VERSION = currentVersion + 1;
+                            openDB().then(resolve).catch(reject);
+                        };
+                        req.onerror = (e) => reject(e.target.error);
+                    } else {
+                        reject(event.target.error);
+                    }
+                };
+            });
+        }
+
+        // Guardar audio en IndexedDB
+        async function saveAudio(blob) {
+            if (!db) await openDB();
+            const tx = db.transaction(STORE_FRASES, 'readwrite');
+            const store = tx.objectStore(STORE_FRASES);
+            store.add({ fecha: new Date().toLocaleString(), audio: blob });
+        }
+
+        // Cargar y mostrar audios guardados
+        async function loadAudios() {
+            if (!db) await openDB();
+            const tx = db.transaction(STORE_FRASES, 'readonly');
+            const store = tx.objectStore(STORE_FRASES);
+            const request = store.getAll();
+
+            request.onsuccess = (event) => {
+                const audios = event.target.result;
+                const frasesList = document.getElementById('frases');
+                frasesList.innerHTML = '';
+
+                if (audios.length === 0) {
+                    const li = document.createElement('li');
+                    const span = document.createElement('span');
+                    span.className = 'frase-text';
+                    span.textContent = "⚠️ No hay frases grabadas aún";
+                    li.style.cursor = 'default';
+                    li.style.background = 'rgba(255, 255, 255, 0.5)';
+                    li.appendChild(span);
+                    frasesList.appendChild(li);
+                    return;
+                }
+
+                audios.forEach(item => {
+                    const li = document.createElement('li');
+
+                    // Texto de la frase
+                    const textSpan = document.createElement('span');
+                    textSpan.className = 'frase-text';
+                    textSpan.textContent = `🎤 Frase (${item.fecha})`;
+                    textSpan.onclick = () => {
+                        const url = URL.createObjectURL(item.audio);
+                        const audio = document.getElementById('audioPlayer');
+                        audio.src = url;
+                        audio.play();
+                        audio.onended = () => URL.revokeObjectURL(url);
+                    };
+
+                    // Botón eliminar
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.innerHTML = '×';
+                    deleteBtn.title = 'Eliminar frase';
+                    deleteBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        deleteFrase(item.id);
+                    };
+
+                    li.appendChild(textSpan);
+                    li.appendChild(deleteBtn);
+                    frasesList.appendChild(li);
+                });
+            };
+        }
+
+        // Eliminar frase
+        async function deleteFrase(id) {
+            if (!confirm('¿Estás seguro de que quieres eliminar esta frase?')) {
+                return;
+            }
+
+            if (!db) await openDB();
+            const tx = db.transaction(STORE_FRASES, 'readwrite');
+            const store = tx.objectStore(STORE_FRASES);
+            store.delete(id);
+
+            tx.oncomplete = () => {
+                loadAudios();
+            };
+        }
+
+        // Grabar frase libre
+        document.getElementById("startRec").onclick = async () => {
+            const btn = document.getElementById("startRec");
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.onstop = async () => {
+                    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                    await saveAudio(blob);
+                    await loadAudios();
+                    audioChunks = [];
+                    btn.classList.remove('recording');
+                    btn.textContent = '🎤 Grabar frase';
+                };
+
+                mediaRecorder.start();
+                btn.classList.add('recording');
+                btn.textContent = '⏺️ Grabando... (3s)';
+                setTimeout(() => {
+                    mediaRecorder.stop();
+                    stream.getTracks().forEach(track => track.stop());
+                }, 3000);
+            } catch (err) {
+                alert("❌ No se pudo acceder al micrófono. Revisa los permisos.");
+                console.error(err);
+            }
+        };
+
+        // Guardar respuesta Sí/No
+        async function saveRespuesta(tipo, blob) {
+            if (!db) await openDB();
+            const tx = db.transaction(STORE_RESP, 'readwrite');
+            tx.objectStore(STORE_RESP).put({ tipo, audio: blob });
+        }
+
+        // Obtener respuesta Sí/No
+        async function getRespuesta(tipo) {
+            if (!db) await openDB();
+            return new Promise(resolve => {
+                const tx = db.transaction(STORE_RESP, 'readonly');
+                const req = tx.objectStore(STORE_RESP).get(tipo);
+                req.onsuccess = e => resolve(e.target.result ? e.target.result.audio : null);
+            });
+        }
+
+        // Manejar click en Sí/No
+        async function handleRespuesta(tipo, btn) {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const existingAudio = await getRespuesta(tipo);
+
+            if (existingAudio) {
+                // Reproducir audio existente
+                const url = URL.createObjectURL(existingAudio);
+                audioPlayer.src = url;
+                audioPlayer.play();
+                audioPlayer.onended = () => URL.revokeObjectURL(url);
+                document.getElementById('instruccion').textContent = '';
+            } else {
+                // Grabar nuevo audio
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                    let chunks = [];
+                    recorder.ondataavailable = e => chunks.push(e.data);
+                    recorder.onstop = async () => {
+                        const blob = new Blob(chunks, { type: 'audio/webm' });
+                        await saveRespuesta(tipo, blob);
+                        btn.classList.remove('recording');
+                        mostrarInstruccion();
+                    };
+                    recorder.start();
+                    btn.classList.add('recording');
+                    setTimeout(() => {
+                        recorder.stop();
+                        stream.getTracks().forEach(track => track.stop());
+                    }, 3000);
+                } catch {
+                    alert("❌ No se pudo acceder al micrófono.");
+                }
+            }
+        }
+
+        // Mostrar instrucción si faltan audios
+        async function mostrarInstruccion() {
+            const audioSi = await getRespuesta('Si');
+            const audioNo = await getRespuesta('No');
+            const instruccion = document.getElementById('instruccion');
+            if (!audioSi || !audioNo) {
+                instruccion.textContent = '🎙️ Presiona "Sí" o "No" para grabar tu voz (3 segundos)';
+            } else {
+                instruccion.textContent = '✅ Listo! Presiona "Sí" o "No" para reproducir';
+            }
+        }
+
+        // Regrabar respuesta (forzar nueva grabación)
+        async function regrabarRespuesta(tipo, btn) {
+            if (!confirm(`¿Quieres regrabar "${tipo}"?`)) {
+                return;
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                let chunks = [];
+                recorder.ondataavailable = e => chunks.push(e.data);
+                recorder.onstop = async () => {
+                    const blob = new Blob(chunks, { type: 'audio/webm' });
+                    await saveRespuesta(tipo, blob);
+                    btn.classList.remove('recording');
+                    alert(`✅ "${tipo}" regrabado exitosamente`);
+                    mostrarInstruccion();
+                };
+                recorder.start();
+                btn.classList.add('recording');
+                setTimeout(() => {
+                    recorder.stop();
+                    stream.getTracks().forEach(track => track.stop());
+                }, 3000);
+            } catch {
+                alert("❌ No se pudo acceder al micrófono.");
+            }
+        }
+
+        // Event listeners para botones Sí/No
+        document.getElementById('btnSi').onclick = function() {
+            handleRespuesta('Si', this);
+        };
+
+        document.getElementById('btnNo').onclick = function() {
+            handleRespuesta('No', this);
+        };
+
+        // Event listeners para botones de editar
+        document.getElementById('editSi').onclick = function(e) {
+            e.stopPropagation();
+            regrabarRespuesta('Si', this);
+        };
+
+        document.getElementById('editNo').onclick = function(e) {
+            e.stopPropagation();
+            regrabarRespuesta('No', this);
+        };
+
+        // Inicialización
+        window.onload = async () => {
+            await openDB();
+            await loadAudios();
+            mostrarInstruccion();
+        };
+    </script>
+</body>
+</html>
