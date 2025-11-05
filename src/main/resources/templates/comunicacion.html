@@ -278,27 +278,26 @@
 
         /* Botón editar/regrabar */
         .edit-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
+            padding: 8px 16px;
+            border-radius: 20px;
             background: white;
             color: var(--gris-oscuro);
             border: 2px solid var(--gris-oscuro);
-            font-size: 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-            padding: 0;
-            margin: 0;
+            white-space: nowrap;
         }
 
         .edit-btn:hover {
             background: var(--gris-oscuro);
             color: white;
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
         /* Estado de grabación */
@@ -337,9 +336,8 @@
             }
 
             .edit-btn {
-                width: 38px;
-                height: 38px;
-                font-size: 1rem;
+                padding: 6px 12px;
+                font-size: 0.75rem;
             }
 
             #instruccion {
@@ -365,9 +363,8 @@
             }
 
             .edit-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 0.85rem;
+                padding: 5px 10px;
+                font-size: 0.7rem;
             }
 
             h1 {
@@ -403,7 +400,7 @@
         <p id="instruccion">🎙️ Presiona el botón y graba con tu propia voz</p>
 
         <div>
-            <button id="startRec">🎤 Grabar frase</button>
+            <button id="startRec">Grabar Frase</button>
         </div>
 
         <ul id="frases"></ul>
@@ -413,18 +410,12 @@
     <!-- Botones Sí/No flotantes con edición -->
     <div class="fixed-buttons">
         <div class="response-btn-container">
-            <button id="btnSi" class="main-response">
-                🎤
-                <span>Sí</span>
-            </button>
-            <button id="editSi" class="edit-btn" title="Regrabar Sí">✏️</button>
+            <button id="btnSi" class="main-response">Sí</button>
+            <button id="editSi" class="edit-btn" title="Regrabar Sí">Regrabar</button>
         </div>
         <div class="response-btn-container">
-            <button id="btnNo" class="main-response">
-                🎤
-                <span>No</span>
-            </button>
-            <button id="editNo" class="edit-btn" title="Regrabar No">✏️</button>
+            <button id="btnNo" class="main-response">No</button>
+            <button id="editNo" class="edit-btn" title="Regrabar No">Regrabar</button>
         </div>
     </div>
 
@@ -501,6 +492,8 @@
                     span.textContent = "⚠️ No hay frases grabadas aún";
                     li.style.cursor = 'default';
                     li.style.background = 'rgba(255, 255, 255, 0.5)';
+                    li.style.justifyContent = 'center'; /* Centrar el mensaje */
+                    li.style.textAlign = 'center'; /* Centrar también el texto */
                     li.appendChild(span);
                     frasesList.appendChild(li);
                     return;
@@ -592,12 +585,12 @@
                     await loadAudios();
                     audioChunks = [];
                     btn.classList.remove('recording');
-                    btn.textContent = '🎤 Grabar frase';
+                    btn.textContent = 'Grabar Frase';
                 };
 
                 mediaRecorder.start();
                 btn.classList.add('recording');
-                btn.textContent = '⏺️ Grabando... (3s)';
+                btn.textContent = 'Grabando... (3s)';
                 setTimeout(() => {
                     mediaRecorder.stop();
                     stream.getTracks().forEach(track => track.stop());
