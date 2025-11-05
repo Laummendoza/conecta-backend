@@ -27,6 +27,17 @@
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            position: relative;
+        }
+
+        /* Contenedor principal para centrar contenido */
+        .main-content {
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         /* Header con logo */
@@ -202,13 +213,6 @@
             display: none;
         }
 
-        /* Espaciado para evitar superposición con botones fijos en desktop */
-        @media (min-width: 769px) {
-            body {
-                padding-right: 180px; /* Espacio para botones Sí/No fijos */
-            }
-        }
-
         /* Botones Sí/No fijos a la derecha - OPTIMIZADOS PARA EYE TRACKING */
         .fixed-buttons {
             position: fixed;
@@ -219,6 +223,20 @@
             flex-direction: column;
             z-index: 1000;
             gap: 40px; /* Mayor separación para eye tracking */
+        }
+
+        /* Mejorar posicionamiento en pantallas grandes */
+        @media (min-width: 769px) {
+            .main-content {
+                padding-right: 180px; /* Espacio para botones Sí/No fijos */
+            }
+        }
+
+        /* Para pantallas muy grandes, limitar distancia de botones */
+        @media (min-width: 1600px) {
+            .fixed-buttons {
+                right: calc((100% - 1400px) / 2 + 20px);
+            }
         }
 
         .response-btn-container {
@@ -397,24 +415,26 @@
 </head>
 
 <body>
-    <!-- Header -->
-    <div class="header">
-        <div class="logo-small" onclick="window.location.href='/'">
-            <img src="/logo.jpg" alt="CONECTA">
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-small" onclick="window.location.href='index.html'">
+                <img src="logo.jpg" alt="CONECTA">
+            </div>
+            <a href="index.html" class="btn-home">🏠 Inicio</a>
         </div>
-        <a href="/" class="btn-home">🏠 Inicio</a>
+
+        <h1>💬 Mi Voz</h1>
+
+        <p id="instruccion">🎙️ Presiona el botón y graba con tu propia voz</p>
+
+        <div>
+            <button id="startRec">🎤 Grabar frase</button>
+        </div>
+
+        <ul id="frases"></ul>
+        <audio id="audioPlayer"></audio>
     </div>
-
-    <h1>💬 Mi Voz</h1>
-
-    <p id="instruccion">🎙️ Presiona el botón y graba con tu propia voz</p>
-
-    <div>
-        <button id="startRec">🎤 Grabar frase</button>
-    </div>
-
-    <ul id="frases"></ul>
-    <audio id="audioPlayer"></audio>
 
     <!-- Botones Sí/No flotantes con edición -->
     <div class="fixed-buttons">
