@@ -122,34 +122,31 @@
             padding: 15px 20px;
             background: white;
             border-radius: 12px;
-            cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             font-size: 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         #frases li:hover {
-            transform: translateX(5px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
             background: linear-gradient(135deg, white 0%, #f9f9f9 100%);
         }
 
         .frase-text {
             flex: 1;
+            cursor: pointer;
         }
 
-        /* Botón eliminar frase */
-        .delete-btn {
-            background: var(--coral);
-            color: white;
+        /* Botones de acción en las frases - TAMAÑOS UNIFICADOS */
+        .play-btn, .delete-btn {
             border: none;
             border-radius: 50%;
-            width: 35px;
-            height: 35px;
+            width: 40px;
+            height: 40px;
             font-size: 1.2rem;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -161,6 +158,28 @@
             flex-shrink: 0;
         }
 
+        /* Botón play */
+        .play-btn {
+            background: var(--celeste);
+            color: white;
+        }
+
+        .play-btn:hover {
+            background: #5a9295;
+            transform: scale(1.15);
+            box-shadow: 0 4px 10px rgba(118, 171, 174, 0.4);
+        }
+
+        .play-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Botón eliminar */
+        .delete-btn {
+            background: var(--coral);
+            color: white;
+        }
+
         .delete-btn:hover {
             background: #ff6b52;
             transform: scale(1.15);
@@ -169,6 +188,13 @@
 
         .delete-btn:active {
             transform: scale(0.95);
+        }
+
+        /* Contenedor de botones de acción */
+        .frase-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
         }
 
         audio {
@@ -363,9 +389,9 @@
                 font-size: 16px;
             }
 
-            .delete-btn {
-                width: 30px;
-                height: 30px;
+            .play-btn, .delete-btn {
+                width: 35px;
+                height: 35px;
                 font-size: 1rem;
             }
         }
@@ -491,8 +517,8 @@
                 audios.forEach(item => {
                     const li = document.createElement('li');
 
-                    // Reproducir audio al hacer clic en toda la frase
-                    li.onclick = () => {
+                    // Función para reproducir audio
+                    const playAudio = () => {
                         const url = URL.createObjectURL(item.audio);
                         const audio = document.getElementById('audioPlayer');
                         audio.src = url;
@@ -500,10 +526,28 @@
                         audio.onended = () => URL.revokeObjectURL(url);
                     };
 
-                    // Texto de la frase
+                    // Botón play
+                    const playBtn = document.createElement('button');
+                    playBtn.className = 'play-btn';
+                    playBtn.innerHTML = '▶';
+                    playBtn.title = 'Reproducir frase';
+                    playBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        playAudio();
+                    };
+
+                    // Texto de la frase (también reproduce al hacer clic)
                     const textSpan = document.createElement('span');
                     textSpan.className = 'frase-text';
-                    textSpan.textContent = `🎤 Frase (${item.fecha})`;
+                    textSpan.textContent = `Frase (${item.fecha})`;
+                    textSpan.onclick = (e) => {
+                        e.stopPropagation();
+                        playAudio();
+                    };
+
+                    // Contenedor de botones de acción
+                    const actionsContainer = document.createElement('div');
+                    actionsContainer.className = 'frase-actions';
 
                     // Botón eliminar
                     const deleteBtn = document.createElement('button');
@@ -515,8 +559,11 @@
                         deleteFrase(item.id);
                     };
 
+                    // Ensamblar la estructura
+                    actionsContainer.appendChild(deleteBtn);
+                    li.appendChild(playBtn);
                     li.appendChild(textSpan);
-                    li.appendChild(deleteBtn);
+                    li.appendChild(actionsContainer);
                     frasesList.appendChild(li);
                 });
             };
