@@ -197,15 +197,8 @@
             align-items: center;
         }
 
+        /* Reproductor de audio oculto - solo para reproducción programática */
         audio {
-            margin-top: 20px;
-            width: 100%;
-            max-width: 500px;
-            border-radius: 10px;
-        }
-
-        /* Ocultar reproductor por defecto */
-        audio.hidden {
             display: none;
         }
 
@@ -421,7 +414,7 @@
     </div>
 
     <ul id="frases"></ul>
-    <audio id="audioPlayer" class="hidden" controls></audio>
+    <audio id="audioPlayer"></audio>
 
     <!-- Botones Sí/No flotantes con edición -->
     <div class="fixed-buttons">
@@ -505,13 +498,9 @@
             request.onsuccess = (event) => {
                 const audios = event.target.result;
                 const frasesList = document.getElementById('frases');
-                const audioPlayer = document.getElementById('audioPlayer');
                 frasesList.innerHTML = '';
 
                 if (audios.length === 0) {
-                    // Ocultar reproductor cuando no hay frases
-                    audioPlayer.classList.add('hidden');
-
                     const li = document.createElement('li');
                     const span = document.createElement('span');
                     span.className = 'frase-text';
@@ -522,9 +511,6 @@
                     frasesList.appendChild(li);
                     return;
                 }
-
-                // Mostrar reproductor cuando hay frases
-                audioPlayer.classList.remove('hidden');
 
                 audios.forEach(item => {
                     const li = document.createElement('li');
