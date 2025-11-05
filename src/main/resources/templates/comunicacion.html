@@ -114,6 +114,7 @@
             max-width: 500px;
             list-style-type: none;
             padding: 0;
+            margin-bottom: 30px;
         }
 
         #frases li {
@@ -175,6 +176,13 @@
             width: 100%;
             max-width: 500px;
             border-radius: 10px;
+        }
+
+        /* Espaciado para evitar superposición con botones fijos en desktop */
+        @media (min-width: 769px) {
+            body {
+                padding-right: 180px; /* Espacio para botones Sí/No fijos */
+            }
         }
 
         /* Botones Sí/No fijos a la derecha - OPTIMIZADOS PARA EYE TRACKING */
@@ -483,17 +491,19 @@
                 audios.forEach(item => {
                     const li = document.createElement('li');
 
-                    // Texto de la frase
-                    const textSpan = document.createElement('span');
-                    textSpan.className = 'frase-text';
-                    textSpan.textContent = `🎤 Frase (${item.fecha})`;
-                    textSpan.onclick = () => {
+                    // Reproducir audio al hacer clic en toda la frase
+                    li.onclick = () => {
                         const url = URL.createObjectURL(item.audio);
                         const audio = document.getElementById('audioPlayer');
                         audio.src = url;
                         audio.play();
                         audio.onended = () => URL.revokeObjectURL(url);
                     };
+
+                    // Texto de la frase
+                    const textSpan = document.createElement('span');
+                    textSpan.className = 'frase-text';
+                    textSpan.textContent = `🎤 Frase (${item.fecha})`;
 
                     // Botón eliminar
                     const deleteBtn = document.createElement('button');
