@@ -1,84 +1,112 @@
-# CONECTA
 
-CONECTA es una aplicación asistiva diseñada para que las personas con **Esclerosis Lateral Amiotrófica (ELA)** preserven su capacidad de comunicación y mantengan la conexión con el mundo utilizando su propia voz, incluso en etapas avanzadas de la enfermedad.
+# Conecta – Aplicación de Comunicación Asistiva (MVP)
 
----
+Conecta es una herramienta diseñada para mejorar la comunicación de personas con Esclerosis Lateral Amiotrófica (ELA), permitiendo seleccionar frases, categorías y acciones de forma rápida, accesible y visual.
 
-## 🚀 Objetivo
-El objetivo principal es ofrecer una herramienta tecnológica accesible, que permita:
-- Facilitar la comunicación de personas con ELA.
-- Mejorar la calidad de vida y la autonomía.
-- Integrar la tecnología en el cuidado de la salud y la inclusión social.
+Este proyecto fue desarrollado en el marco del concurso **InnovELA**, priorizando accesibilidad, simplicidad y rapidez de uso para pacientes con limitaciones motoras.
 
 ---
 
-## 🛠️ Tecnologías utilizadas
-- **Backend:** Java + Spring Boot  
-- **Frontend:** Thymeleaf (para esta primera demo)  
-- **Base de datos:** MySQL (en esta etapa inicial también se probó con H2 en memoria)  
+## 🧩 Evolución técnica del proyecto
+
+El proyecto comenzó como un backend en **Java + Spring Boot**, utilizando:
+
+- Arquitectura en capas  
+- Controladores REST  
+- Persistencia en MySQL  
+- Pruebas de repositorio  
+
+Este backend sentó las bases de la estructura de datos y la lógica inicial.
+
+Sin embargo, debido al tiempo acotado del concurso y la necesidad de entregar un prototipo funcional accesible, el proyecto evolucionó hacia un **MVP ligero basado en HTML, CSS, JavaScript y Cloud Code**, priorizando:
+
+- velocidad de desarrollo,
+- accesibilidad desde navegador,
+- posibilidad de demo inmediata sin despliegues complejos.
+
+El backend original queda **documentado y listo para futura integración**, mientras que el MVP publicado permite validar la interacción del usuario en tiempo real.
 
 ---
 
-## 📂 Estructura del proyecto
+## 🚀 Demo online (GitHub Pages)
 
-```
-conecta-backend/
-├── src/
-│   ├── main/
-│   │   ├── java/com/conecta/conecta/     → Código fuente Java
-│   │   └── resources/                    → Templates Thymeleaf, configuración
-│   │       ├── templates/                → Páginas HTML (Thymeleaf)
-│   │       │   ├── index.html           → Página de inicio
-│   │       │   └── comunicacion.html    → Página "Mi Voz"
-│   │       └── static/                   → Recursos estáticos (CSS, JS, imágenes)
-│   └── test/                             → Tests
-├── docs/                                 → GitHub Pages (documentación pública)
-│   ├── index.html                       → Landing page
-│   ├── comunicacion.html                → Demo "Mi Voz"
-│   └── logo.jpg                         → Logo CONECTA
-├── pom.xml                               → Dependencias Maven
-└── README.md                             → Documentación del proyecto
-```
+Podés probar el prototipo funcional acá:
+
+👉 **https://laummendoza.github.io/conecta-backend/**
 
 ---
 
-## 📌 Endpoints iniciales
-- `GET /usuarios` → Lista todos los usuarios.  
-- `POST /usuarios` → Crea un nuevo usuario.  
-- `GET /frases` → Lista todas las frases.  
-- `GET /frases/por-clave?clave=palabra` → Busca frases por palabra clave parcial.  
+## 🛠 Tecnologías utilizadas
+
+### **Versión inicial (backend real)**
+- Java 17
+- Spring Boot
+- Spring Web
+- Spring Security (estructura base)
+- MySQL / JPA
+- Arquitectura en capas (controller, service, repository)
+
+### **Versión actual (MVP publicado)**
+- HTML5
+- CSS3 (estilos propios)
+- JavaScript vanilla
+- Visual Studio Code
+- Git / GitHub Pages
+- Cloud Code para manejo rápido de funciones
 
 ---
 
-## ✅ Estado actual
-- Conexión establecida a base de datos MySQL.  
-- Persistencia de entidad `Usuario`.  
-- Persistencia de entidad `Frase`.  
-- Búsqueda por palabra clave funcionando correctamente.  
+## 📦 Funcionalidades del MVP
+
+- Selección rápida de categorías de frases  
+- Navegación simple e intuitiva  
+- Visualización ampliada de frases  
+- Sistema de frases predeterminadas  
+- Interfaz limpia pensada para pacientes con dificultades motoras  
+- Prototipo usable 100% desde el navegador
 
 ---
 
-## 📅 Próximos pasos
-1. Mejorar el diseño de las vistas con Thymeleaf.  
-2. Documentar API con Swagger/OpenAPI.  
-3. Desplegar demo funcional.  
-4. Preparar MVP para **InnovELA (septiembre 2025)**.  
+## 🌱 Objetivo del proyecto
+
+Crear una herramienta de comunicación asistiva que:
+
+- reduzca la fatiga cognitiva,
+- mejore la velocidad de interacción,
+- permita acceso desde cualquier dispositivo,
+- sea adaptable a las necesidades del usuario,
+- pueda ampliarse con backend real, login, personalización y base de datos.
+
+---
+
+## 📌 Estado del proyecto
+
+- ✔ MVP funcional publicado  
+- ✔ Interfaz accesible  
+- ✔ Base técnica documentada  
+- ⏳ Integración futura del backend completo  
+- ⏳ Persistencia real de frases y usuarios  
+- ⏳ Módulo de personalización  
+
+---
+
+## 🧗‍♀️ Próximos pasos (versión backend completa)
+
+- Implementar CRUD de frases y categorías  
+- Autenticación con Spring Security  
+- Persistencia en MySQL / PostgreSQL  
+- Endpoint REST para sincronizar preferencias  
+- Panel de usuario  
+- Exportación/importación de frases  
 
 ---
 
 ## 👩‍💻 Autora
-Proyecto desarrollado por **Laura Mendoza**  
-Médica y desarrolladora backend en formación.  
-Participación en concurso InnovELA 2025.  
 
----
+**Laura Mendoza**  
+Desarrolladora Backend – Java | Spring Boot  
+Proyecto desarrollado en el marco de InnovELA.
 
-## 🤝 Contribuciones
-Actualmente este proyecto está en desarrollo personal.  
-En el futuro, se aceptarán contribuciones de colaboradores.  
+LinkedIn: https://www.linkedin.com/in/laumendoza/  
+GitHub: https://github.com/Laummendoza
 
----
-
-## 📜 Licencia
-Este proyecto es de uso académico y social.  
-Pendiente de definir licencia (MIT/GPL).
